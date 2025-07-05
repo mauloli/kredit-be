@@ -21,6 +21,7 @@ module.exports = function (app) {
     valid: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: false
     }
 
   }, {
