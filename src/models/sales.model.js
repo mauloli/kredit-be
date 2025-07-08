@@ -18,10 +18,6 @@ module.exports = function (app) {
         key: 'id'
       }
     },
-    no_ktp: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     id_motor: {
       type: DataTypes.INTEGER,
       allowNull: false,

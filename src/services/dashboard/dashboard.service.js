@@ -3,7 +3,6 @@ const { Dashboard } = require('./dashboard.class');
 const hooks = require('./dashboard.hooks');
 
 module.exports = function (app) {
-  console.log('service')
   const options = {
     paginate: app.get('paginate')
   };

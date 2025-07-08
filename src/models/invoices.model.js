@@ -18,10 +18,10 @@ module.exports = function (app) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    valid: {
-      type: DataTypes.BOOLEAN,
+    status: {
+      type: DataTypes.ENUM('MENUNGGU', 'SUKSES', 'TOLAK'),
       allowNull: false,
-      defaultValue: false
+      defaultValue: 'MENUNGGU'
     }
 
   }, {

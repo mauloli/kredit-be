@@ -33,14 +33,47 @@ const adjustStok = () => {
   }
 }
 
+const generateContract = () => {
+  return async context => {
+    const prefix = 'MTR';
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    const contractNumber = `${prefix}-${date}-${random}`;
+
+    context.data.no_kontrak = contractNumber
+
+    return context;
+  };
+}
+
+const includePelanggan = () => {
+  return async context => {
+    const { app } = context
+    const sequelize = app.get('sequelizeClient').models
+    const { tb_pelanggan } = sequelize
+
+    context.params.sequelize = {
+      include: [tb_pelanggan],
+      raw: false
+    };
+
+    return context;
+  };
+};
+
 
 
 module.exports = {
   before: {
     all: [authenticate('jwt')],
-    find: [],
+    find: [
+      includePelanggan()
+
+    ],
     get: [],
     create: [
+      generateContract(),
       handleUser()
     ],
     update: [],

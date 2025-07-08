@@ -3,6 +3,8 @@
 const isAdmin = require("./hooks/isAdmin");
 const log = require("./hooks/log");
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const { unless } = require('feathers-hooks-common');
+
 
 module.exports = {
   before: {
@@ -10,8 +12,11 @@ module.exports = {
     find: [],
     get: [],
     create: [
-      authenticate('jwt'),
-      isAdmin()
+      unless(
+        hook => hook.path === 'authentication',
+        authenticate('jwt'),
+        isAdmin()
+      )
     ],
     update: [],
     patch: [],

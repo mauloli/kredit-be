@@ -11,7 +11,8 @@ const addCicilan = () => {
     const invoices = await app.service('invoices').find({
       query: {
         id_penjualan: data.id_penjualan,
-        $sort: { cicilan: -1 }, 
+        status: { $nin: ['TOLAK'] },
+        $sort: { cicilan: -1 },
         $limit: 1
       },
       paginate: false
@@ -25,10 +26,32 @@ const addCicilan = () => {
   };
 };
 
+const includePelanggan = () => {
+  return async context => {
+    const { app } = context
+    const sequelize = app.get('sequelizeClient').models
+    const { tb_pelanggan, tb_penjualan } = sequelize
+
+    context.params.sequelize = {
+      include: [
+        { model: tb_penjualan, include: [tb_pelanggan] }
+      ],
+      raw: false,
+      where: { status: { $notIn: ['TOLAK'] } }
+    };
+
+    return context;
+  };
+};
+
+
+
 module.exports = {
   before: {
     all: [authenticate('jwt')],
-    find: [],
+    find: [
+      includePelanggan()
+    ],
     get: [],
     create: [
       addCicilan()

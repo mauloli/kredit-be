@@ -8,7 +8,7 @@ const createUser = () => {
       username: data.email,
       password: data.password,
       name: data.nama,
-      role: 3
+      role_id: 3
     };
 
     const user = await app.service('users').create(userPayload, params);
