@@ -13,7 +13,7 @@ module.exports = {
     get: [],
     create: [
       unless(
-        hook => hook.path === 'authentication',
+        hook => ['authentication', 'invoices'].includes(hook.path),
         authenticate('jwt'),
         isAdmin()
       )

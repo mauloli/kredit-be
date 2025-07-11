@@ -24,7 +24,7 @@
       "expiresIn": "1d"
     },
     "local": {
-      "usernameField": "username",
+      "usernameField": "login_name",
       "passwordField": "password"
     }
   },

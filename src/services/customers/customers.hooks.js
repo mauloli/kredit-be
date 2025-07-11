@@ -5,7 +5,7 @@ const createUser = () => {
     const { data, app, params } = context;
 
     const userPayload = {
-      username: data.email,
+      login_name: data.email,
       password: data.password,
       name: data.nama,
       role_id: 3
