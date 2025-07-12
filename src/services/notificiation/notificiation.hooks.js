@@ -1,10 +1,8 @@
-const dueDate = require('../../hooks/due-date');
-
 const { authenticate } = require('@feathersjs/authentication').hooks;
 
 module.exports = {
   before: {
-    all: [authenticate('jwt')],
+    all: [ authenticate('jwt') ],
     find: [],
     get: [],
     create: [],
@@ -15,9 +13,7 @@ module.exports = {
 
   after: {
     all: [],
-    find: [
-      dueDate(),
-    ],
+    find: [],
     get: [],
     create: [],
     update: [],

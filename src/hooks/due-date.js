@@ -35,7 +35,7 @@ module.exports = (options = {}) => {
 
     const salesService = context.app.service('sales');
     const model = context.app.get('sequelizeClient').models;
-    const { tb_pelanggan, users } = model;
+    const { tb_pelanggan, users, tb_pembayaran } = model;
     const sales = await salesService._find({
       query: {
       },
@@ -55,11 +55,25 @@ module.exports = (options = {}) => {
     if (!datSales) {
       return context;
     }
+
+    const startOfMonth = moment().startOf('month').toDate();
+    const endOfMonth = moment().endOf('month').toDate();
+
+    const invoices = await tb_pembayaran.findOne({
+      where: {
+        id_penjualan: datSales.id,
+        status: { $ne: 'TOLAK' },
+        created_at: {
+          $between: [startOfMonth, endOfMonth]
+        }
+      },
+    });
+
     const dueDate = getDueDate(datSales.created_at);
     const today = moment().startOf('day');
     const due = moment(dueDate, 'YYYY-MM-DD').startOf('day');
 
-    if (today.isSameOrAfter(due)) {
+    if (today.isSameOrAfter(due) && !invoices) {
       console.log('Sudah jatuh tempo atau lebih');
     } else {
       console.log('Belum jatuh tempo');

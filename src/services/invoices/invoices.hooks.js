@@ -1,3 +1,5 @@
+const transaction = require('../../hooks/transaction');
+
 const { authenticate } = require('@feathersjs/authentication').hooks;
 
 const addCicilan = () => {
@@ -44,6 +46,30 @@ const includePelanggan = () => {
   };
 };
 
+const pushNotification = () => {
+  return async context => {
+    const { app, result, params } = context;
+    const model = app.get('sequelizeClient').models;
+    const { tb_penjualan } = model;
+
+    const { id_user: userIdSales = null } = await tb_penjualan.findOne({
+      where: { id: result.id_penjualan },
+      attributes: ['id_user']
+    });
+
+    if (userIdSales) {
+      const notificationService = app.service('notificiation');
+      await notificationService._create({
+        title: 'Pembayaran Baru',
+        message: `Pembayaran baru untuk penjualan ID ${result.id_penjualan}`,
+        user_id: userIdSales
+      });
+    }
+
+    return context;
+  }
+}
+
 
 
 module.exports = {
@@ -54,6 +80,7 @@ module.exports = {
     ],
     get: [],
     create: [
+      transaction.start(),
       addCicilan()
     ],
     update: [],
@@ -65,7 +92,10 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [
+      pushNotification(),
+      transaction.end()
+    ],
     update: [],
     patch: [],
     remove: []
@@ -75,7 +105,9 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [
+      transaction.rollback()
+    ],
     update: [],
     patch: [],
     remove: []
