@@ -99,10 +99,10 @@ const pushNotification = () => {
 const addNumber = () => {
   return async context => {
     const { result, params } = context;
-    const skip = params.query?.$skip || 0;
+    const skip = Number(params.query?.$skip) || 0;
 
     result.data = result.data.map((item, index) => {
-      const data = item.dataValues ?? item; // fallback kalau bukan instance Sequelize
+      const data = item.dataValues ?? item;
 
       return {
         ...data,
