@@ -14,21 +14,12 @@ exports.Dashboard = class Dashboard {
     const vehicles = this.app.service('vehicle')
     const customers = this.app.service('customers')
     const model = this.app.get('sequelizeClient').models
-    const role = params?.user?.role_id
+    const { query } = params
+
 
     const { tb_pelanggan, tb_penjualan } = model
 
-    const result = await invoice.find({
-      sequelize: {
-        include: [
-          {
-            model: tb_penjualan,
-            include: [tb_pelanggan]
-          }
-        ],
-        raw: false
-      }
-    })
+    const result = await invoice.find(params)
 
     const allVehicles = await vehicles.find({
       paginate: false,

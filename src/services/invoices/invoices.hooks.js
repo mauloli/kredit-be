@@ -30,14 +30,40 @@ const addCicilan = () => {
 
 const includePelanggan = () => {
   return async context => {
-    const { app } = context
+    const { app, params } = context
     const sequelize = app.get('sequelizeClient').models
-    const { tb_pelanggan, tb_penjualan } = sequelize
+    const { tb_pelanggan, tb_penjualan, tb_motor } = sequelize
+    const { user } = params;
+
+    const includeOptions = [
+      {
+        model: tb_penjualan,
+        required: true,
+        include: []
+      }
+    ];
+
+    if (user.role_id === 3) {
+      includeOptions[0].include.push(
+        {
+          model: tb_pelanggan,
+          where: { id_user: user.id },
+          required: true
+        },
+        {
+          model: tb_motor,
+          required: false
+        }
+      );
+    } else {
+      includeOptions[0].include.push(
+        { model: tb_pelanggan, required: false },
+        { model: tb_motor, required: false }
+      );
+    }
 
     context.params.sequelize = {
-      include: [
-        { model: tb_penjualan, include: [tb_pelanggan] }
-      ],
+      include: includeOptions,
       raw: false,
       where: { status: { $notIn: ['TOLAK'] } }
     };
@@ -70,6 +96,24 @@ const pushNotification = () => {
   }
 }
 
+const addNumber = () => {
+  return async context => {
+    const { result, params } = context;
+    const skip = params.query?.$skip || 0;
+
+    result.data = result.data.map((item, index) => {
+      const data = item.dataValues ?? item; // fallback kalau bukan instance Sequelize
+
+      return {
+        ...data,
+        no: skip + index + 1
+      };
+    });
+
+    return context;
+  }
+}
+
 
 
 module.exports = {
@@ -90,7 +134,9 @@ module.exports = {
 
   after: {
     all: [],
-    find: [],
+    find: [
+      addNumber()
+    ],
     get: [],
     create: [
       pushNotification(),
