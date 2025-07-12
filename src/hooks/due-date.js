@@ -2,7 +2,8 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const moment = require('moment');
-// eslint-disable-next-line no-unused-vars
+require('moment/locale/id');
+moment.locale('id');
 
 function getDueDate(createdAt) {
   const created = moment(createdAt);
@@ -34,8 +35,9 @@ module.exports = (options = {}) => {
     }
 
     const salesService = context.app.service('sales');
+    const notificationService = context.app.service('notificiation');
     const model = context.app.get('sequelizeClient').models;
-    const { tb_pelanggan, users, tb_pembayaran } = model;
+    const { tb_pelanggan, users, tb_pembayaran, notificiation } = model;
     const sales = await salesService._find({
       query: {
       },
@@ -72,11 +74,29 @@ module.exports = (options = {}) => {
     const dueDate = getDueDate(datSales.created_at);
     const today = moment().startOf('day');
     const due = moment(dueDate, 'YYYY-MM-DD').startOf('day');
+    const duedate = due.add(7, 'days').toDate();
+    const dueDateFormatted = moment(duedate).format('LL');
 
     if (today.isSameOrAfter(due) && !invoices) {
-      console.log('Sudah jatuh tempo atau lebih');
-    } else {
-      console.log('Belum jatuh tempo');
+      const checkNotif = await notificiation.findOne({
+        where: {
+          user_id: params.user.id,
+          title: 'Jatuh Tempo',
+          message: `Penjualan ID ${datSales.id} jatuh tempo pada ${dueDateFormatted}`
+        }
+      });
+
+
+      if (checkNotif) {
+        return context;
+      }
+
+      await notificationService._create({
+        title: 'Jatuh Tempo',
+        message: `Penjualan ID ${datSales.id} jatuh tempo pada ${dueDateFormatted}`,
+        user_id: params.user.id
+      });
+      console.log(`Notifikasi jatuh tempo untuk penjualan ID ${datSales.id} telah dikirim.`);
     }
     return context;
   };

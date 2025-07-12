@@ -17,36 +17,34 @@ exports.Dashboard = class Dashboard {
     const role = params?.user?.role_id
 
     const { tb_pelanggan, tb_penjualan } = model
-    if (!role || role !== 3) {
 
-      const result = await invoice.find({
-        sequelize: {
-          include: [
-            {
-              model: tb_penjualan,
-              include: [tb_pelanggan]
-            }
-          ],
-          raw: false
-        }
-      })
+    const result = await invoice.find({
+      sequelize: {
+        include: [
+          {
+            model: tb_penjualan,
+            include: [tb_pelanggan]
+          }
+        ],
+        raw: false
+      }
+    })
 
-      const allVehicles = await vehicles.find({
-        paginate: false,
-        query: {}
-      });
+    const allVehicles = await vehicles.find({
+      paginate: false,
+      query: {}
+    });
 
-      const totalPelangan = await customers.Model.count()
-      const totalSales = await sales.Model.count()
-      const totalStok = allVehicles.reduce((sum, item) => sum + (item.jumlah_stok || 0), 0);
-      const totalTipe = allVehicles.length
+    const totalPelangan = await customers.Model.count()
+    const totalSales = await sales.Model.count()
+    const totalStok = allVehicles.reduce((sum, item) => sum + (item.jumlah_stok || 0), 0);
+    const totalTipe = allVehicles.length
 
-      Object.assign(result, {
-        totalPelangan, totalSales, totalStok, totalTipe
-      })
+    Object.assign(result, {
+      totalPelangan, totalSales, totalStok, totalTipe
+    })
 
-      return result;
-    }
+    return result;
   }
 
   async get(id, params) {

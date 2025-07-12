@@ -15,7 +15,6 @@ module.exports = {
       unless(
         hook => ['authentication', 'invoices'].includes(hook.path),
         authenticate('jwt'),
-        isAdmin()
       )
     ],
     update: [],
