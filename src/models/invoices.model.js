@@ -22,6 +22,10 @@ module.exports = function (app) {
       type: DataTypes.ENUM('MENUNGGU', 'SUKSES', 'TOLAK'),
       allowNull: false,
       defaultValue: 'MENUNGGU'
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
     }
 
   }, {
