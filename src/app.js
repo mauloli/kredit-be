@@ -28,7 +28,16 @@ app.configure(configuration());
 app.use(helmet({
   contentSecurityPolicy: false
 }));
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  next();
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(compress());
 app.use(express.json());
