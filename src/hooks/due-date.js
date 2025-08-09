@@ -19,7 +19,7 @@ function getDueDate(createdAt) {
 
   const dueDate = thisMonthDue.subtract(7, 'days');
 
-  if (dueDate.month() === now.month() && dueDate.year() === now.year()) {
+  if (dueDate < now) {
     return dueDate.format('YYYY-MM-DD');
   }
 
@@ -82,7 +82,7 @@ module.exports = (options = {}) => {
         where: {
           user_id: params.user.id,
           title: 'Jatuh Tempo',
-          message: `Penjualan ID ${datSales.id} jatuh tempo pada ${dueDateFormatted}`
+          message: `Penjualan dengan No kontrak ${datSales.no_kontrak} jatuh tempo pada ${dueDateFormatted}`
         }
       });
 
@@ -93,7 +93,7 @@ module.exports = (options = {}) => {
 
       await notificationService._create({
         title: 'Jatuh Tempo',
-        message: `Penjualan ID ${datSales.id} jatuh tempo pada ${dueDateFormatted}`,
+        message: `Penjualan dengan No kontrak ${datSales.no_kontrak} jatuh tempo pada ${dueDateFormatted}`,
         user_id: params.user.id
       });
       console.log(`Notifikasi jatuh tempo untuk penjualan ID ${datSales.id} telah dikirim.`);
