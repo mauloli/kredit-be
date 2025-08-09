@@ -10,7 +10,7 @@ const addCicilan = () => {
       throw new Error('id_penjualan wajib diisi');
     }
 
-    const invoices = await app.service('invoices').find({
+    const invoices = await app.service('invoices')._find({
       query: {
         id_penjualan: data.id_penjualan,
         status: { $nin: ['TOLAK'] },
