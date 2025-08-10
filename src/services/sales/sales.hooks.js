@@ -1,3 +1,5 @@
+const { disablePagination } = require('feathers-hooks-common');
+
 const { authenticate } = require('@feathersjs/authentication').hooks;
 
 const handleUser = () => {
@@ -68,7 +70,8 @@ module.exports = {
   before: {
     all: [authenticate('jwt')],
     find: [
-      includePelanggan()
+      includePelanggan(),
+      disablePagination()
 
     ],
     get: [],
