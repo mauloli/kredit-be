@@ -38,7 +38,11 @@ module.exports = function (app) {
 
   // eslint-disable-next-line no-unused-vars
   invoices.associate = function (models) {
-    invoices.belongsTo(models.tb_penjualan, { foreignKey: 'id_penjualan' });
+    invoices.belongsTo(models.tb_penjualan, {
+      foreignKey: 'id_penjualan',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
   };
 
   return invoices;
