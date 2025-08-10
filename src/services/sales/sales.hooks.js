@@ -51,10 +51,10 @@ const includePelanggan = () => {
   return async context => {
     const { app } = context
     const sequelize = app.get('sequelizeClient').models
-    const { tb_pelanggan } = sequelize
+    const { tb_pelanggan,tb_motor } = sequelize
 
     context.params.sequelize = {
-      include: [tb_pelanggan],
+      include: [tb_pelanggan,tb_motor],
       raw: false
     };
 
