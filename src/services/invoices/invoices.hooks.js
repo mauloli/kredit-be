@@ -1,3 +1,4 @@
+const { disablePagination } = require('feathers-hooks-common');
 const transaction = require('../../hooks/transaction');
 
 const { authenticate } = require('@feathersjs/authentication').hooks;
@@ -100,8 +101,8 @@ const addNumber = () => {
   return async context => {
     const { result, params } = context;
     const skip = Number(params.query?.$skip) || 0;
-
-    result.data = result.data.map((item, index) => {
+    const results = result?.data || result
+    const handleResult = results.map((item, index) => {
       const data = item.dataValues ?? item;
 
       return {
@@ -109,6 +110,12 @@ const addNumber = () => {
         no: skip + index + 1
       };
     });
+
+    if(result.data){
+      context.result.data = handleResult;
+    } else{
+      context.result = handleResult;
+    }
 
     return context;
   }
@@ -120,7 +127,8 @@ module.exports = {
   before: {
     all: [authenticate('jwt')],
     find: [
-      includePelanggan()
+      includePelanggan(),
+      disablePagination()
     ],
     get: [],
     create: [
